@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trần Bảo Ngọc | Genshin Impact Portfolio</title>
+  
+  <!-- Google Fonts hỗ trợ 100% tiếng Việt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;800;900&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --genshin-gold: #e4c485;
+      --genshin-gold-bright: #ffe699;
+      --genshin-gold-glow: rgba(228, 196, 133, 0.45);
+      --genshin-gold-dark: #b8934b;
+      --genshin-blue-dark: #0b1220;
+      --genshin-panel-bg: rgba(13, 21, 37, 0.92);
+      --genshin-card-bg: rgba(18, 29, 52, 0.75);
+      --genshin-card-hover: rgba(26, 42, 75, 0.92);
+      --genshin-border-gold: rgba(228, 196, 133, 0.32);
+      --genshin-border-highlight: rgba(255, 230, 153, 0.7);
+      --genshin-text-gold: #f5e4c3;
+      --genshin-text-muted: #b0c2d8;
+      --genshin-text-dim: #7f95b0;
+      --font-title: 'Noto Serif SC', serif, 'Montserrat';
+      --font-body: 'Montserrat', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: #070c18;
+      color: #ede5d8;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Tùy chỉnh thanh cuộn mang phong cách Teyvat */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(7, 12, 24, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(228, 196, 133, 0.35);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--genshin-gold);
+    }
+
+    /* Hình nền đêm Liyue */
+    .bg-viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 15%, rgba(18, 38, 77, 0.45) 0%, rgba(5, 10, 20, 0.96) 100%),
+                  url('https://images.alphacoders.com/112/1127027.png') center/cover no-repeat;
+      z-index: -2;
+      filter: brightness(0.92) contrast(1.05);
+    }
+
+    /* Canvas đom đóm, bụi sao & SAO BĂNG vụt chéo */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Họa tiết góc khung phong cách Genshin */
+    .genshin-corner {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--genshin-gold);
+      pointer-events: none;
+      z-index: 4;
+      opacity: 0.85;
+      transition: all 0.3s ease;
+    }
+    .corner-tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+    .corner-br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+    /* ========================================================
+       1. MÀN HÌNH QUAY GACHA (VIDEO INTRO CÓ NÚT BẬT TIẾNG)
+       ======================================================== */
+    #gacha-container {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+
+    #gacha-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .unmute-banner {
+      position: absolute;
+      bottom: 45px;
+      background: rgba(14, 22, 38, 0.88);
+      border: 1.5px solid var(--genshin-gold);
+      color: var(--genshin-gold-bright);
+      padding: 13px 30px;
+      border-radius: 30px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 24px rgba(228, 196, 133, 0.6);
+      transition: all 0.3s ease;
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: pulseBtn 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseBtn {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 16px rgba(228, 196, 133, 0.5); }
+      50% { transform: scale(1.05); box-shadow: 0 0 28px rgba(228, 196, 133, 0.9); }
+    }
+
+    .unmute-banner:hover {
+      background: var(--genshin-gold);
+      color: #1a1208;
+      transform: scale(1.08);
+    }
+
+    .skip-btn {
+      position: absolute;
+      top: 25px;
+      right: 35px;
+      background: rgba(14, 22, 38, 0.8);
+      border: 1.5px solid var(--genshin-gold);
+      color: var(--genshin-gold-bright);
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 2px;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skip-btn:hover {
+      background: var(--genshin-gold);
+      color: #1a1208;
+      box-shadow: 0 0 18px rgba(228, 196, 133, 0.85);
+      transform: scale(1.05);
+    }
+
+    #white-flash {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10002;
+      transition: opacity 0.4s ease-out;
+    }
+
+    /* ========================================================
+       2. MÀN HÌNH SPLASH ART TRIỆU HỒI NHÂN VẬT 5 SAO
+       ======================================================== */
+    #wish-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: radial-gradient(circle at center, rgba(46, 32, 17, 0.95) 0%, rgba(8, 12, 20, 0.98) 100%);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      padding: 20px;
+    }
+
+    .reveal-rays {
+      position: absolute;
+      width: 140vmax;
+      height: 140vmax;
+      background: conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.18), transparent 45deg, rgba(255, 215, 0, 0.12), transparent 90deg);
+      animation: rotateRays 28s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotateRays {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .reveal-content {
+      position: relative;
+      z-index: 9100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: popIn 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .reveal-avatar-box {
+      width: 320px;
+      height: 320px;
+      position: relative;
+      margin-bottom: 22px;
+      filter: drop-shadow(0 0 35px rgba(255, 215, 0, 0.8));
+      animation: floatBreath 4.5s ease-in-out infinite;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(255, 235, 170, 0.25) 0%, transparent 70%);
+    }
+
+    .reveal-avatar-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .stars-box {
+      color: #ffcc00;
+      font-size: 2rem;
+      letter-spacing: 10px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 12px #ffb300);
+      animation: starsGleam 2.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes starsGleam {
+      0% { filter: drop-shadow(0 0 8px #ffb300); transform: scale(0.98); }
+      100% { filter: drop-shadow(0 0 18px #ffe680); transform: scale(1.02); }
+    }
+
+    .char-title-tag {
+      font-size: 0.95rem;
+      color: var(--genshin-gold);
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: rgba(228, 196, 133, 0.12);
+      padding: 4px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(228, 196, 133, 0.3);
+    }
+
+    .char-name-big {
+      font-family: var(--font-title);
+      font-size: 3rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(255, 230, 153, 0.7);
+      margin: 10px 0 26px 0;
+    }
+
+    .btn-enter-portfolio {
+      padding: 14px 44px;
+      font-size: 1.05rem;
+      font-family: var(--font-body);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fce5b8, #cca056);
+      color: #241608;
+      border: 2px solid #fff5db;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 26px rgba(209, 154, 72, 0.6);
+      transition: all 0.3s ease;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-enter-portfolio:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 32px rgba(255, 215, 0, 0.9);
+      background: linear-gradient(135deg, #fff3cf, #e2ab5b);
+    }
+
+    /* ========================================================
+       3. THANH PROFILE HEADER
+       ======================================================== */
+    .genshin-header-bar {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 82px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      background: linear-gradient(180deg, rgba(8, 14, 28, 0.96) 0%, rgba(8, 14, 28, 0.82) 100%);
+      z-index: 500;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .header-divider {
+      width: 100%;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent 0%, rgba(228, 196, 133, 0.6) 20%, rgba(255, 230, 153, 0.95) 50%, rgba(228, 196, 133, 0.6) 80%, transparent 100%);
+      box-shadow: 0 0 12px rgba(228, 196, 133, 0.7);
+      position: sticky;
+      top: 82px;
+      z-index: 499;
+    }
+
+    .player-badge {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .crown-avatar-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--genshin-gold);
+      background: radial-gradient(circle, #25334d 40%, #111827 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--genshin-gold-glow);
+      font-size: 22px;
+      color: var(--genshin-gold-bright);
+      position: relative;
+    }
+
+    .crown-avatar-circle::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1px dashed rgba(228, 196, 133, 0.4);
+      animation: rotateRays 20s linear infinite;
+    }
+
+    .player-meta h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-meta p {
+      font-size: 13px;
+      color: var(--genshin-text-muted);
+      font-weight: 500;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .player-meta p span.tag-world {
+      color: var(--genshin-gold-bright);
+      font-weight: 600;
+    }
+
+    .round-sound-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid var(--genshin-border-gold);
+      background: rgba(22, 34, 60, 0.85);
+      color: var(--genshin-gold-bright);
+      font-size: 19px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .round-sound-btn.playing {
+      border-color: var(--genshin-gold);
+      box-shadow: 0 0 18px var(--genshin-gold-glow);
+      animation: soundPulse 1.6s infinite ease-in-out;
+    }
+
+    .round-sound-btn:hover {
+      transform: scale(1.1);
+      background: rgba(30, 48, 85, 0.95);
+      border-color: var(--genshin-gold);
+    }
+
+    @keyframes soundPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    /* ========================================================
+       4. GIAO DIỆN CHÍNH (MAIN CONTAINER & STICKY SIDEBAR)
+       ======================================================== */
+    .main-container {
+      max-width: 1360px;
+      margin: 32px auto 70px;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* Thẻ nhân vật ghim vị trí khi cuộn trang */
+    .character-card {
+      background: var(--genshin-panel-bg);
+      border: 1.5px solid var(--genshin-border-gold);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 104px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .character-card:hover {
+      border-color: rgba(228, 196, 133, 0.55);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 25px rgba(228, 196, 133, 0.15);
+    }
+
+    .portrait-box {
+      width: 100%;
+      height: 410px;
+      border-radius: 14px;
+      background: radial-gradient(circle at center, rgba(38, 59, 102, 0.65) 0%, rgba(9, 16, 32, 0.98) 100%);
+      border: 1px solid rgba(228, 196, 133, 0.3);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .portrait-img {
+      max-width: 92%;
+      max-height: 92%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.8));
+      animation: floatBreath 5s ease-in-out infinite;
+      transition: transform 0.4s ease;
+    }
+
+    .portrait-box:hover .portrait-img {
+      transform: scale(1.04);
+    }
+
+    @keyframes floatBreath {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .element-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(18, 28, 52, 0.92);
+      border: 1px solid var(--genshin-gold);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--genshin-gold);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      z-index: 5;
+      letter-spacing: 0.5px;
+    }
+
+    .vision-icon {
+      color: #ffd166;
+      animation: pulseBtn 3s infinite ease-in-out;
+    }
+
+    .char-info-header {
+      margin-top: 20px;
+      border-bottom: 1px solid rgba(228, 196, 133, 0.2);
+      padding-bottom: 16px;
+      text-align: left;
+    }
+
+    .char-name {
+      font-family: var(--font-title);
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff8e8;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .char-name-stars {
+      color: #ffc400;
+      font-size: 15px;
+      letter-spacing: 2px;
+      filter: drop-shadow(0 0 6px #ffab00);
+    }
+
+    .char-subtitle {
+      font-size: 13.5px;
+      color: var(--genshin-gold);
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .char-stats {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-label {
+      color: var(--genshin-text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label i {
+      color: var(--genshin-gold);
+      width: 16px;
+      font-size: 13px;
+    }
+
+    .stat-value {
+      color: var(--genshin-text-gold);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .stat-highlight {
+      color: var(--genshin-gold-bright);
+      font-weight: 700;
+    }
+
+    /* Thanh đo level phong cách Genshin */
+    .stat-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #d19a48, #ffe08a);
+      box-shadow: 0 0 8px rgba(255, 224, 138, 0.5);
+    }
+
+    /* ========================================================
+       5. CỘT PHẢI: NỘI DUNG TABS & MOTION TRANSITIONS
+       ======================================================== */
+    .content-panel {
+      background: var(--genshin-panel-bg);
+      border: 1.5px solid var(--genshin-border-gold);
+      border-radius: 18px;
+      padding: 30px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65);
+      min-height: 670px;
+      position: relative;
+    }
+
+    /* Tab Bar Menu */
+    .tab-bar {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1.5px solid rgba(228, 196, 133, 0.25);
+      padding-bottom: 18px;
+      margin-bottom: 26px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid rgba(228, 196, 133, 0.18);
+      color: var(--genshin-text-muted);
+      padding: 11px 22px;
+      border-radius: 9px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hiệu ứng vệt sáng lướt qua khi hover nút */
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: skewX(-25deg);
+      transition: left 0.6s ease;
+    }
+
+    .tab-btn:hover::after {
+      left: 140%;
+    }
+
+    .tab-btn:hover {
+      color: var(--genshin-text-gold);
+      background: rgba(228, 196, 133, 0.12);
+      border-color: rgba(228, 196, 133, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      color: #241608;
+      background: linear-gradient(180deg, #fce5b8 0%, #d8ad5f 100%);
+      border: 1.5px solid #fff5dd;
+      font-weight: 700;
+      box-shadow: 0 5px 18px rgba(228, 196, 133, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active i {
+      color: #241608;
+    }
+
+    /* Hiệu ứng chuyển động cho Tab Pane */
+    .tab-pane {
+      display: none;
+      animation: tabEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes tabEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.99);
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    /* Tiêu đề mục nội dung */
+    .section-title {
+      font-family: var(--font-title);
+      font-size: 21px;
+      color: var(--genshin-gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .section-title i {
+      color: var(--genshin-gold-bright);
+      font-size: 19px;
+    }
+
+    .section-desc {
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: #d3dfef;
+      margin-bottom: 22px;
+    }
+
+    .quote-box {
+      background: rgba(228, 196, 133, 0.08);
+      border-left: 3px solid var(--genshin-gold);
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0 20px 0;
+      font-style: italic;
+      color: var(--genshin-text-gold);
+    }
+
+    /* ========================================================
+       6. THẺ KỸ NĂNG & THIÊN PHÚ
+       ======================================================== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .skill-card {
+      background: var(--genshin-card-bg);
+      border: 1px solid var(--genshin-border-gold);
+      border-radius: 14px;
+      padding: 18px;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card:hover {
+      border-color: var(--genshin-gold-bright);
+      background: var(--genshin-card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 18px rgba(228, 196, 133, 0.22);
+    }
+
+    .skill-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(228, 196, 133, 0.12);
+      border: 1px solid rgba(228, 196, 133, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--genshin-gold-bright);
+      font-size: 21px;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .skill-card:hover .skill-icon-wrap {
+      transform: scale(1.08) rotate(5deg);
+      background: rgba(228, 196, 133, 0.22);
+      border-color: var(--genshin-gold);
+      box-shadow: 0 0 14px var(--genshin-gold-glow);
+    }
+
+    .skill-info {
+      flex: 1;
+    }
+
+    .skill-name {
+      font-weight: 700;
+      font-size: 15.5px;
+      color: #f7ede1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .skill-badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(228, 196, 133, 0.18);
+      color: var(--genshin-gold);
+      font-weight: 600;
+    }
+
+    .skill-level {
+      font-size: 12.5px;
+      color: var(--genshin-text-muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .skill-progress {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .skill-progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #d19a48, #ffe08a);
+    }
+
+    /* ========================================================
+       7. THẺ NHIỆM VỤ & DỰ ÁN
+       ======================================================== */
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .project-item {
+      background: var(--genshin-card-bg);
+      border: 1px solid var(--genshin-border-gold);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+    }
+
+    .project-item:hover {
+      border-color: var(--genshin-gold-bright);
+      background: var(--genshin-card-hover);
+      transform: translateX(6px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(228, 196, 133, 0.18);
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .project-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--genshin-text-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-type {
+      font-size: 12px;
+      background: rgba(228, 196, 133, 0.16);
+      color: var(--genshin-gold-bright);
+      border: 1px solid rgba(228, 196, 133, 0.35);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: #b9cadc;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tech-tag {
+      font-size: 12px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      background: #111a2f;
+      color: #a4b9d4;
+      border: 1px solid rgba(228, 196, 133, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .project-item:hover .tech-tag {
+      border-color: rgba(228, 196, 133, 0.4);
+      color: var(--genshin-text-gold);
+    }
+
+    /* ========================================================
+       8. THẺ LIÊN HỆ CO-OP & TƯƠNG TÁC
+       ======================================================== */
+    .coop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .coop-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--genshin-card-bg);
+      border: 1px solid var(--genshin-border-gold);
+      padding: 18px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: #ffffff;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .coop-card:hover {
+      border-color: var(--genshin-gold-bright);
+      background: var(--genshin-card-hover);
+      transform: translateX(6px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    .coop-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .coop-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(228, 196, 133, 0.12);
+      border: 1px solid rgba(228, 196, 133, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--genshin-gold);
+      font-size: 20px;
+    }
+
+    .coop-info-title {
+      font-weight: 700;
+      color: var(--genshin-text-gold);
+      font-size: 15px;
+    }
+
+    .coop-info-value {
+      font-size: 13.5px;
+      color: var(--genshin-text-muted);
+      margin-top: 2px;
+    }
+
+    .coop-btn {
+      background: rgba(228, 196, 133, 0.15);
+      border: 1px solid rgba(228, 196, 133, 0.4);
+      color: var(--genshin-gold-bright);
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .coop-btn:hover {
+      background: var(--genshin-gold);
+      color: #1a1208;
+      box-shadow: 0 0 12px var(--genshin-gold-glow);
+    }
+
+    /* Thông báo copy nhanh (Toast) */
+    #copy-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: rgba(14, 22, 38, 0.95);
+      border: 1.5px solid var(--genshin-gold);
+      color: var(--genshin-gold-bright);
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 20px rgba(228, 196, 133, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 10005;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #copy-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* UID góc màn hình */
+    .screen-uid-dark {
+      color: rgba(245, 228, 195, 0.8);
+      text-shadow: 0 2px 5px rgba(0,0,0,0.85);
+      position: fixed;
+      bottom: 18px;
+      right: 28px;
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      z-index: 100;
+      font-size: 14px;
+      background: rgba(11, 18, 32, 0.65);
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(228, 196, 133, 0.2);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .character-card {
+        position: relative;
+        top: 0;
+      }
+      .portrait-box {
+        height: 360px;
+      }
+      .genshin-header-bar {
+        padding: 0 24px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-container {
+        padding: 0 16px;
+        margin: 20px auto 50px;
+      }
+      .content-panel {
+        padding: 20px;
+      }
+      .portrait-box {
+        height: 300px;
+      }
+      .char-name-big {
+        font-size: 2.2rem;
+      }
+      .reveal-avatar-box {
+        width: 250px;
+        height: 250px;
+      }
+      .tab-btn {
+        padding: 9px 15px;
+        font-size: 13px;
+      }
+      .screen-uid-dark {
+        bottom: 10px;
+        right: 14px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Liyue ban đêm & Particle Canvas với SAO BĂNG -->
+  <div class="bg-viewport"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Thông báo sao chép nhanh -->
+  <div id="copy-toast"><i class="fa-solid fa-circle-check"></i> Đã sao chép vào bộ nhớ tạm!</div>
+
+  <!-- ========================================================
+       1. MÀN HÌNH QUAY GACHA
+       ======================================================== -->
+  <div id="gacha-container">
+    <button class="skip-btn" onclick="finishGacha()">
+      <i class="fa-solid fa-forward-step"></i> BỎ QUA
+    </button>
+
+    <!-- Nút mở âm thanh video -->
+    <button class="unmute-banner" id="unmute-btn" onclick="unmuteGacha()">
+      <i class="fa-solid fa-volume-high" id="unmute-icon"></i> <span id="unmute-text">BẬT ÂM THANH VIDEO</span>
+    </button>
+
+    <video id="gacha-video" autoplay playsinline muted>
+      <!-- Ưu tiên file video local của dự án -->
+      <source src="video.mp4" type="video/mp4">
+      <source src="Media1.mp4" type="video/mp4">
+      <source src="gacha.mp4" type="video/mp4">
+      <!-- Fallback video online -->
+      <source src="https://assets.codepen.io/3364143/genshin-impact-loading-screen.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Chớp sáng trắng khi chuyển cảnh -->
+  <div id="white-flash"></div>
+
+  <!-- ========================================================
+       2. MÀN HÌNH SPLASH ART TRIỆU HỒI NHÂN VẬT 5 SAO
+       ======================================================== -->
+  <div id="wish-reveal">
+    <div class="reveal-rays"></div>
+    <div class="reveal-content">
+      <div class="stars-box">★★★★★</div>
+      <div class="char-title-tag">SSR • MỆNH THỔ (NHAM) / KẾ TOÁN - KIỂM TOÁN ACCA</div>
+      <h1 class="char-name-big">TRẦN BẢO NGỌC</h1>
+
+      <div class="reveal-avatar-box">
+        <img src="photo.png" alt="Trần Bảo Ngọc" onerror="this.src='avt.png'; this.onerror=function(){this.src='anh.jpg';}">
+      </div>
+
+      <button class="btn-enter-portfolio" onclick="enterDashboard()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> KHÁM PHÁ PORTFOLIO
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       3. THANH PROFILE HEADER
+       ======================================================== -->
+  <header class="genshin-header-bar">
+    <div class="player-badge">
+      <div class="crown-avatar-circle">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      <div class="player-meta">
+        <h1>Trần Bảo Ngọc</h1>
+        <p>Cấp Thám Hiểm (AR) 60 • THẾ GIỚI <span class="tag-world">FTU CS1 (ĐẠI HỌC NGOẠI THƯƠNG)</span></p>
+      </div>
+    </div>
+
+    <!-- Nút loa bật/tắt nhạc -->
+    <button class="round-sound-btn" id="audio-toggle" title="Bật/Tắt Nhạc Nền">
+      <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+    </button>
+  </header>
+  <div class="header-divider"></div>
+
+  <!-- ========================================================
+       4. GIAO DIỆN CHÍNH (MAIN DASHBOARD)
+       ======================================================== -->
+  <main class="main-container">
+    
+    <!-- CỘT TRÁI: THẺ THÔNG TIN NHÂN VẬT (STICKY) -->
+    <aside class="character-card">
+      <div class="genshin-corner corner-tl"></div>
+      <div class="genshin-corner corner-tr"></div>
+      <div class="genshin-corner corner-bl"></div>
+      <div class="genshin-corner corner-br"></div>
+
+      <div class="portrait-box">
+        <div class="element-tag">
+          <i class="fa-solid fa-gem vision-icon"></i> NGUYÊN TỐ NHAM • KTV CHÍNH TRỰC
+        </div>
+        <img class="portrait-img" id="user-avatar" src="photo.png" alt="Trần Bảo Ngọc" onerror="this.src='avt.png'; this.onerror=function(){this.src='anh.jpg';}">
+      </div>
+
+      <div class="char-info-header">
+        <h2 class="char-name">
+          Trần Bảo Ngọc
+          <span class="char-name-stars">★★★★★</span>
+        </h2>
+        <p class="char-subtitle">Sinh viên Kế toán - Kiểm toán ACCA | FTU CS1</p>
+      </div>
+
+      <div class="char-stats">
+        <div class="stat-row">
+          <span class="stat-label"><i class="fa-regular fa-calendar-days"></i> Ngày Sinh</span>
+          <span class="stat-value">23/02/2006</span>
+        </div>
+        
+        <div class="stat-row">
+          <span class="stat-label"><i class="fa-solid fa-id-card"></i> Mã Sinh Viên (UID)</span>
+          <span class="stat-value stat-highlight">2411820054</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label"><i class="fa-solid fa-graduation-cap"></i> Chuyên Ngành</span>
+          <span class="stat-value">Kế toán - Kiểm toán ACCA</span>
+        </div>
+
+        <div>
+          <div class="stat-row" style="border-bottom: none; padding-bottom: 2px;">
+            <span class="stat-label"><i class="fa-solid fa-chart-line"></i> Điểm Học Lực (GPA)</span>
+            <span class="stat-value stat-highlight">3.6 / 4.00 (Xuất sắc)</span>
+          </div>
+          <div class="stat-bar-wrap">
+            <div class="stat-bar-fill" style="width: 90%;"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-row" style="border-bottom: none; padding-bottom: 2px;">
+            <span class="stat-label"><i class="fa-solid fa-heart"></i> Độ Thân Thiết</span>
+            <span class="stat-value stat-highlight">Lv. 10 (Max Teyvat)</span>
+          </div>
+          <div class="stat-bar-wrap">
+            <div class="stat-bar-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CỘT PHẢI: HỆ THỐNG TAB THÔNG TIN -->
+    <section class="content-panel">
+      <div class="genshin-corner corner-tl"></div>
+      <div class="genshin-corner corner-tr"></div>
+      <div class="genshin-corner corner-bl"></div>
+      <div class="genshin-corner corner-br"></div>
+      
+      <nav class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-profile">
+          <i class="fa-solid fa-book-bookmark"></i> Tiểu Sử & Định Hướng
+        </button>
+        <button class="tab-btn" data-tab="tab-skills">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Thiên Phú & Kỹ Năng
+        </button>
+        <button class="tab-btn" data-tab="tab-projects">
+          <i class="fa-solid fa-scroll"></i> Nhiệm Vụ (Dự Án)
+        </button>
+        <button class="tab-btn" data-tab="tab-contact">
+          <i class="fa-solid fa-users"></i> Co-op (Liên Hệ)
+        </button>
+      </nav>
+
+      <!-- TAB 1: TIỂU SỬ & ĐỊNH HƯỚNG -->
+      <div class="tab-pane active" id="tab-profile">
+        <h3 class="section-title"><i class="fa-solid fa-feather-pointed"></i> Giới Thiệu Bản Thân</h3>
+        <p class="section-desc">
+          <b>Trần Bảo Ngọc</b> là lữ khách đến từ mảnh đất Thái Bình giàu truyền thống, hiện đang theo học Chuyên ngành Kế toán - Kiểm toán định hướng ACCA tại ngôi trường danh giá <b>Đại học Ngoại Thương (FTU CS1)</b>.
+        </p>
+
+        <div class="quote-box">
+          <i class="fa-solid fa-quote-left" style="margin-right: 8px;"></i>
+          Cũng như vùng đất thương cảng Liyue phồn hoa luôn coi trọng <b>"Khế Ước Thần Nham"</b>, kim chỉ nam số một trong sự nghiệp Kế toán - Kiểm toán chính là <b>Tính chính trực, sự minh bạch và tinh thần trách nhiệm tuyệt đối</b> trên từng con số.
+        </div>
+
+        <p class="section-desc">
+          Bên cạnh thành tích học tập ấn tượng với điểm số GPA đạt mức <b>3.6 / 4.00 (Xuất sắc)</b>, Bảo Ngọc còn là một nhân tố năng động trong phong trào sinh viên với vai trò <b>Phó Ban tại Cộng Đồng Chuyên</b> và <b>Trưởng Ban Nhân Sự tại FAASA</b> (Hội Sinh viên Khoa Kế toán - Kiểm toán trường Đại học Ngoại Thương). Sự kết hợp giữa tư duy phân tích sắc bén và năng lực lãnh đạo, gắn kết tập thể tạo nên phong thái vững vàng, kiên định trên mọi hành trình.
+        </p>
+        
+        <h3 class="section-title" style="margin-top: 28px;"><i class="fa-solid fa-compass"></i> Định Hướng Vận Mệnh</h3>
+        <p class="section-desc">
+          • <b>Chinh phục đỉnh cao chuyên môn:</b> Tập trung nghiên cứu chuyên sâu về Kiểm toán Tài chính, Chuẩn mực Báo cáo Tài chính Quốc tế (IFRS) và hoàn thành các môn thi cấp chứng chỉ nghề nghiệp quốc tế danh giá <b>ACCA</b>.<br>
+          • <b>Quản trị rủi ro & Chuyển đổi số:</b> Đón đầu xu thế ứng dụng công nghệ phân tích dữ liệu lớn (Big Data) và các công cụ tự động hóa quy trình (RPA) nhằm tối ưu hóa độ chính xác và hiệu suất trong hoạt động kiểm toán hiện đại.<br>
+          • <b>Mục tiêu vươn tầm:</b> Hướng tới môi trường làm việc chuyên nghiệp tại các hãng kiểm toán hàng đầu thế giới (Big 4) và các tập đoàn tài chính đa quốc gia.
+        </p>
+      </div>
+
+      <!-- TAB 2: NGOẠI NGỮ & KỸ NĂNG -->
+      <div class="tab-pane" id="tab-skills">
+        
+        <h3 class="section-title"><i class="fa-solid fa-language"></i> Ngôn Ngữ (Nguyên Tố)</h3>
+        <div class="skills-grid">
+          
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-earth-americas"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Tiếng Anh
+                <span class="skill-badge">IELTS 7.0</span>
+              </div>
+              <div class="skill-level">Cấp độ 9 • Thành thạo đọc hiểu chuẩn mực IFRS, viết báo cáo & thuyết trình học thuật chuyên nghiệp.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 88%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-dragon"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Tiếng Trung
+                <span class="skill-badge">HSK 4</span>
+              </div>
+              <div class="skill-level">Cấp độ 7 • Giao tiếp thương mại vững vàng, xử lý chứng từ và hợp tác đối tác song ngữ.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 72%;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <h3 class="section-title" style="margin-top: 30px;"><i class="fa-solid fa-bolt-lightning"></i> Cấp Độ Thiên Phú Chuyên Môn</h3>
+        <div class="skills-grid">
+
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-file-excel"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Excel & BCTC Chuyên Sâu
+                <span class="skill-badge">Cấp độ 10</span>
+              </div>
+              <div class="skill-level">Mô hình hóa tài chính, Power Query, hàm phân tích phức hợp & xử lý bộ dữ liệu kế toán lớn.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 98%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-calculator"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Phần Mềm ERP MISA & Fast
+                <span class="skill-badge">Cấp độ 9</span>
+              </div>
+              <div class="skill-level">Thiết lập hệ thống tài khoản, nhập liệu hạch toán, kê khai thuế và lập BCTC theo chuẩn VAS.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 88%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ĐÃ ĐỔI: Thay 'Design nghiệp dư' thành 'Thiết kế Truyền thông & Đồ họa số' -->
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-palette"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Thiết kế Truyền thông & Đồ họa số
+                <span class="skill-badge">Cấp độ 8</span>
+              </div>
+              <div class="skill-level">Sáng tạo ấn phẩm truyền thông, bộ nhận diện sự kiện, Banner, Poster, UI Layout & Video motion phục vụ tổ chức.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 80%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-icon-wrap"><i class="fa-solid fa-people-roof"></i></div>
+            <div class="skill-info">
+              <div class="skill-name">
+                Quản Trị Rủi Ro & Lãnh Đạo
+                <span class="skill-badge">Cấp độ 9</span>
+              </div>
+              <div class="skill-level">Điều phối nhân sự quy mô lớn, hoạch định ngân sách, kiểm soát tiến độ & giải quyết xung đột dự án.</div>
+              <div class="skill-progress">
+                <div class="skill-progress-bar" style="width: 90%;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 3: DỰ ÁN & NHIỆM VỤ -->
+      <div class="tab-pane" id="tab-projects">
+        <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> Nhiệm Vụ Đã Hoàn Thành</h3>
+        <div class="project-grid">
+
+          <article class="project-item">
+            <div class="project-header">
+              <h4 class="project-name">
+                <i class="fa-solid fa-award" style="color: #ffc107;"></i>
+                1. Tổ Chức Sự Kiện Kết Nối Sinh Viên Quy Mô 1000 Người
+              </h4>
+              <span class="project-type">Ma Thần Nhiệm Vụ</span>
+            </div>
+            <p class="project-desc">
+              Đảm nhiệm vị trí <b>Trưởng Ban Điều Phối</b>. Trực tiếp xây dựng bản kế hoạch tổng thể, phân luồng điều phối hơn 50 nhân sự các tiểu ban, giám sát timeline chặt chẽ từng phút và quản trị rủi ro kịch bản. Sự kiện diễn ra thành công rực rỡ với sự hiện diện của hơn 1000 tân sinh viên FTU cùng các khách mời doanh nghiệp.
+            </p>
+            <div class="project-tags">
+              <span class="tech-tag"><i class="fa-solid fa-users-gear"></i> Điều Phối 50+ Nhân Sự</span>
+              <span class="tech-tag"><i class="fa-solid fa-clock"></i> Quản Trị Timeline</span>
+              <span class="tech-tag"><i class="fa-solid fa-shield-virus"></i> Xử Lý Rủi Ro Hiện Trường</span>
+            </div>
+          </article>
+
+          <article class="project-item">
+            <div class="project-header">
+              <h4 class="project-name">
+                <i class="fa-solid fa-coins" style="color: #ffc107;"></i>
+                2. Quản Trị Tài Chính - Giải Bóng Đá Giao Hữu Thường Niên
+              </h4>
+              <span class="project-type">Truyền Thuyết Nhiệm Vụ</span>
+            </div>
+            <p class="project-desc">
+              Chịu trách nhiệm trực tiếp thiết lập <b>bảng cân đối ngân sách</b>, kiểm soát dòng tiền tài trợ và chi phí vận hành (hậu cần sân bãi, tổ trọng tài, truyền thông, giải thưởng). Quyết toán minh bạch với tỷ lệ sai số thực tế <b>dưới 1%</b>, cung cấp báo cáo tài chính toàn diện được hội đồng ban tổ chức đánh giá tuyệt đối về độ tin cậy.
+            </p>
+            <div class="project-tags">
+              <span class="tech-tag"><i class="fa-solid fa-file-invoice-dollar"></i> Lập Dự Toán Ngân Sách</span>
+              <span class="tech-tag"><i class="fa-solid fa-magnifying-glass-dollar"></i> Kiểm Soát Dòng Tiền</span>
+              <span class="tech-tag"><i class="fa-solid fa-check-double"></i> Quyết Toán Minh Bạch &lt;1% Sai Số</span>
+            </div>
+          </article>
+
+          <article class="project-item">
+            <div class="project-header">
+              <h4 class="project-name">
+                <i class="fa-solid fa-chess-knight" style="color: #ffc107;"></i>
+                3. Cuộc Thi Học Thuật Chuyên Môn Toàn Quốc (ABCC)
+              </h4>
+              <span class="project-type">Nhiệm Vụ Thế Giới</span>
+            </div>
+            <p class="project-desc">
+              Thành viên nòng cốt thuộc <b>Ban Chuyên Môn</b> cuộc thi giải Case Study Kinh doanh - Tài chính quy mô toàn quốc thu hút hơn <b>300 thí sinh</b> tài năng từ nhiều trường đại học hàng đầu. Đóng góp xây dựng bộ đề thi tình huống thực tế doanh nghiệp, thiết lập tiêu chí chấm điểm chi tiết và phối hợp chặt chẽ với các chuyên gia, cố vấn cao cấp để thẩm định bài thi.
+            </p>
+            <div class="project-tags">
+              <span class="tech-tag"><i class="fa-solid fa-briefcase"></i> Case Study Phân Tích Tài Chính</span>
+              <span class="tech-tag"><i class="fa-solid fa-graduation-cap"></i> Quy Mô 300+ Thí Sinh Toàn Quốc</span>
+              <span class="tech-tag"><i class="fa-solid fa-scale-balanced"></i> Xây Dựng Ma Trận Chấm Thi</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- TAB 4: LIÊN HỆ CO-OP -->
+      <div class="tab-pane" id="tab-contact">
+        <h3 class="section-title"><i class="fa-solid fa-handshake"></i> Tham Gia Thế Giới Của Bạn</h3>
+        <p class="section-desc">
+          Luôn sẵn sàng kết nối, chia sẻ kinh nghiệm học tập chuyên ngành ACCA, nghiên cứu khoa học sinh viên và sẵn sàng đón nhận các cơ hội thực tập, hợp tác dự án Kế toán - Kiểm toán và Phân tích Tài chính.
+        </p>
+
+        <div class="coop-list">
+          
+          <div class="coop-card">
+            <div class="coop-left">
+              <div class="coop-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div>
+                <div class="coop-info-title">Hòm Thư Điện Tử (Email)</div>
+                <div class="coop-info-value" id="email-val">tranngoc260106@gmail.com</div>
+              </div>
+            </div>
+            <button class="coop-btn" onclick="copyText('tranngoc260106@gmail.com')">
+              <i class="fa-solid fa-copy"></i> Sao Chép
+            </button>
+          </div>
+
+          <div class="coop-card">
+            <div class="coop-left">
+              <div class="coop-icon"><i class="fa-brands fa-facebook"></i></div>
+              <div>
+                <div class="coop-info-title">Mạng Xã Hội (Facebook)</div>
+                <div class="coop-info-value">fb.com/tran.bao.ngoc.634404</div>
+              </div>
+            </div>
+            <a href="https://facebook.com/tran.bao.ngoc.634404" target="_blank" class="coop-btn" style="text-decoration: none;">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Ghé Thăm
+            </a>
+          </div>
+
+          <div class="coop-card">
+            <div class="coop-left">
+              <div class="coop-icon"><i class="fa-solid fa-gamepad"></i></div>
+              <div>
+                <div class="coop-info-title">Mã Sinh Viên / UID Teyvat</div>
+                <div class="coop-info-value">2411820054 (Thế giới FTU CS1)</div>
+              </div>
+            </div>
+            <button class="coop-btn" onclick="copyText('2411820054')">
+              <i class="fa-solid fa-copy"></i> Sao Chép UID
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <div class="screen-uid-dark">UID: 2411820054</div>
+
+  <!-- Audio Element: Nhạc nền hào hùng của dự án -->
+  <audio id="bgm-player" loop preload="auto">
+    <!-- Ưu tiên file bgm.mp3 local có sẵn trong thư mục -->
+    <source src="bgm.mp3" type="audio/mpeg">
+    <source src="YTSave_YouTube_Media_IZNrWFHh8WI_Anthem-of-the-Savannah_009_128k.mp3" type="audio/mpeg">
+    <source src="Natlan_Battle_Theme.mp3" type="audio/mpeg">
+    <source src="genshin_bgm.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ========================================================
+       JAVASCRIPT: TƯƠNG TÁC ÂM THANH, SAO BĂNG, HIỆU ỨNG VÀ CHUYỂN TAB
+       ======================================================== -->
+  <script>
+    const gachaVideo = document.getElementById('gacha-video');
+    const gachaContainer = document.getElementById('gacha-container');
+    const unmuteBtn = document.getElementById('unmute-btn');
+    const unmuteText = document.getElementById('unmute-text');
+    const unmuteIcon = document.getElementById('unmute-icon');
+    const whiteFlash = document.getElementById('white-flash');
+    const wishReveal = document.getElementById('wish-reveal');
+    const bgmPlayer = document.getElementById('bgm-player');
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioIcon = document.getElementById('audio-icon');
+
+    // ==========================================
+    // 1. WEB AUDIO API: TIẾNG CLICK & CHIME GENSHIN CHUẨN
+    // ==========================================
+    let audioCtx;
+    function playGenshinClick(isTab = false) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+
+        // Tầng 1: Click tấn công đanh giòn (Attack Crisp)
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'triangle';
+
+        if (isTab) {
+          // Âm sắc thanh thoát khi đổi tab (E6 -> A6)
+          osc1.frequency.setValueAtTime(1318.51, now);
+          osc1.frequency.exponentialRampToValueAtTime(1760.00, now + 0.05);
+          gain1.gain.setValueAtTime(0.12, now);
+          gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+        } else {
+          // Âm sắc nút bấm thường (C6 -> G6)
+          osc1.frequency.setValueAtTime(1046.50, now);
+          osc1.frequency.exponentialRampToValueAtTime(1567.98, now + 0.04);
+          gain1.gain.setValueAtTime(0.09, now);
+          gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+        }
+
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.16);
+
+        // Tầng 2: Âm chuông pha lê ngân vang (Crystal Resonance)
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        const chimeFreq = isTab ? 2093.00 : 1760.00; // C7 hoặc A6
+        osc2.frequency.setValueAtTime(chimeFreq, now);
+        osc2.frequency.exponentialRampToValueAtTime(chimeFreq * 0.98, now + 0.22);
+        gain2.gain.setValueAtTime(0.06, now);
+        gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now);
+        osc2.stop(now + 0.24);
+
+      } catch (e) {
+        console.warn("Audio Context Click error:", e);
+      }
+    }
+
+    // ==========================================
+    // 2. TƯƠNG TÁC GACHA & CHUYỂN CẢNH
+    // ==========================================
+    function unmuteGacha() {
+      playGenshinClick(false);
+      gachaVideo.muted = false;
+      gachaVideo.volume = 1.0;
+      unmuteBtn.style.background = 'var(--genshin-gold)';
+      unmuteBtn.style.color = '#1a1208';
+      unmuteIcon.className = 'fa-solid fa-volume-high';
+      unmuteText.textContent = 'ĐÃ BẬT TIẾNG VIDEO';
+      setTimeout(() => {
+        unmuteBtn.style.opacity = '0';
+        setTimeout(() => unmuteBtn.style.display = 'none', 300);
+      }, 800);
+    }
+
+    gachaVideo.addEventListener('ended', finishGacha);
+
+    function finishGacha() {
+      playGenshinClick(false);
+      gachaVideo.pause();
+      whiteFlash.style.opacity = '1';
+      
+      setTimeout(() => {
+        gachaContainer.style.display = 'none';
+        wishReveal.style.display = 'flex';
+        setTimeout(() => {
+          wishReveal.style.opacity = '1';
+          whiteFlash.style.opacity = '0';
+          // Bắn một đợt sao băng chúc mừng
+          spawnShootingStar(true);
+        }, 80);
+      }, 350);
+    }
+
+    function enterDashboard() {
+      playGenshinClick(false);
+      whiteFlash.style.opacity = '0.9';
+
+      bgmPlayer.volume = 0.55;
+      bgmPlayer.play().then(() => {
+        audioToggle.classList.add('playing');
+        audioIcon.className = 'fa-solid fa-volume-high';
+      }).catch(err => {
+        console.log("Trình duyệt chờ tương tác thêm để phát BGM:", err);
+      });
+
+      setTimeout(() => {
+        wishReveal.style.display = 'none';
+        whiteFlash.style.opacity = '0';
+        // Kích hoạt một sao băng khi vào dashboard
+        spawnShootingStar(true);
+      }, 400);
+    }
+
+    // ==========================================
+    // 3. ĐIỀU KHIỂN NHẠC NỀN
+    // ==========================================
+    audioToggle.addEventListener('click', () => {
+      playGenshinClick(false);
+      if (bgmPlayer.paused) {
+        bgmPlayer.play().then(() => {
+          audioToggle.classList.add('playing');
+          audioIcon.className = 'fa-solid fa-volume-high';
+        });
+      } else {
+        bgmPlayer.pause();
+        audioToggle.classList.remove('playing');
+        audioIcon.className = 'fa-solid fa-volume-xmark';
+      }
+    });
+
+    // ==========================================
+    // 4. CHUYỂN TAB KÈM TIẾNG CLICK & SAO BĂNG
+    // ==========================================
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Phát tiếng click đặc trưng cho chuyển tab
+        playGenshinClick(true);
+        const targetTabId = btn.getAttribute('data-tab');
+
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        const targetPane = document.getElementById(targetTabId);
+        if (targetPane) {
+          targetPane.classList.add('active');
+        }
+
+        // Tỷ lệ 50% kích hoạt thêm một sao băng vụt ngang khi chuyển tab
+        if (Math.random() > 0.5) {
+          spawnShootingStar(false);
+        }
+      });
+    });
+
+    // ==========================================
+    // 5. SAO CHÉP NHANH (CLIPBOARD TOAST)
+    // ==========================================
+    function copyText(val) {
+      playGenshinClick(false);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val);
+      } else {
+        const tempInput = document.createElement("input");
+        tempInput.value = val;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+      }
+
+      const toast = document.getElementById('copy-toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2200);
+    }
+
+    // ==========================================
+    // 6. CANVAS: ĐOM ĐÓM/ĐÈN HOA ĐĂNG & SAO BĂNG (SHOOTING STARS)
+    // ==========================================
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let shootingStars = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Hạt đèn hoa đăng / bụi sao bay lên
+    class LanternParticle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = height + Math.random() * 80;
+        this.speedY = 0.35 + Math.random() * 0.65;
+        this.speedX = Math.sin(Math.random() * Math.PI) * 0.35;
+        this.size = 2.5 + Math.random() * 4.2;
+        this.alpha = 0.25 + Math.random() * 0.6;
+        this.isLantern = Math.random() > 0.68;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX + Math.sin(this.y * 0.012) * 0.35;
+        if (this.y < -30) this.reset();
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        if (this.isLantern) {
+          ctx.fillStyle = '#ffb347';
+          ctx.shadowBlur = 14;
+          ctx.shadowColor = '#ff8c00';
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(this.x, this.y, this.size * 1.4, this.size * 1.8, 3);
+          } else {
+            ctx.rect(this.x, this.y, this.size * 1.4, this.size * 1.8);
+          }
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#fce2ad';
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = '#fcd074';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    // SAO BĂNG VỤT CHÉO MÀN HÌNH (SHOOTING STAR)
+    class ShootingStar {
+      constructor(forceGolden = false) {
+        this.init(forceGolden);
+      }
+
+      init(forceGolden) {
+        // Xuất phát từ góc trên hoặc phía trên bên trái/phải bay chéo xuống
+        this.x = Math.random() * (width * 1.1) - (width * 0.15);
+        this.y = -30 - Math.random() * 80;
+        this.length = 130 + Math.random() * 160; // Độ dài vệt đuôi
+        this.speed = 16 + Math.random() * 12;    // Vận tốc cao
+        // Góc bay chéo (~36° đến ~48°)
+        this.angle = (36 + Math.random() * 12) * (Math.PI / 180);
+        this.dx = Math.cos(this.angle) * this.speed;
+        this.dy = Math.sin(this.angle) * this.speed;
+        this.radius = 1.8 + Math.random() * 1.6;
+        this.opacity = 0;
+        this.maxOpacity = 0.85 + Math.random() * 0.15;
+        this.state = 'fade-in';
+        this.life = 0;
+        this.maxLife = 45 + Math.random() * 35;
+        this.isGold = forceGolden || (Math.random() > 0.35); // Vàng kim hoặc xanh ánh bạc
+        this.active = true;
+      }
+
+      update() {
+        this.x += this.dx;
+        this.y += this.dy;
+        this.life++;
+
+        if (this.state === 'fade-in') {
+          this.opacity += 0.12;
+          if (this.opacity >= this.maxOpacity) {
+            this.opacity = this.maxOpacity;
+            this.state = 'active';
+          }
+        } else if (this.life > this.maxLife * 0.55) {
+          this.opacity -= 0.035;
+          if (this.opacity <= 0) {
+            this.active = false;
+          }
+        }
+
+        if (this.x > width + 250 || this.y > height + 250) {
+          this.active = false;
+        }
+      }
+
+      draw() {
+        if (this.opacity <= 0) return;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, Math.min(1, this.opacity));
+
+        // Tọa độ vệt đuôi
+        const tailX = this.x - Math.cos(this.angle) * this.length;
+        const tailY = this.y - Math.sin(this.angle) * this.length;
+
+        // Gradient vệt đuôi phát sáng
+        const grad = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
+        if (this.isGold) {
+          grad.addColorStop(0, 'rgba(255, 215, 0, 0)');
+          grad.addColorStop(0.5, 'rgba(228, 196, 133, 0.35)');
+          grad.addColorStop(0.85, 'rgba(255, 235, 160, 0.85)');
+          grad.addColorStop(1, '#ffffff');
+        } else {
+          grad.addColorStop(0, 'rgba(180, 220, 255, 0)');
+          grad.addColorStop(0.5, 'rgba(160, 205, 255, 0.3)');
+          grad.addColorStop(0.85, 'rgba(230, 245, 255, 0.85)');
+          grad.addColorStop(1, '#ffffff');
+        }
+
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = this.radius * 1.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+
+        // Đầu ngôi sao sáng chói (Star Head)
+        ctx.shadowBlur = this.isGold ? 18 : 14;
+        ctx.shadowColor = this.isGold ? '#ffe27a' : '#d2e7ff';
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    // Khởi tạo 45 hạt hoa đăng
+    for (let i = 0; i < 45; i++) {
+      const p = new LanternParticle();
+      p.y = Math.random() * height;
+      particles.push(p);
+    }
+
+    // Hàm tạo sao băng mới
+    function spawnShootingStar(forceGolden = false) {
+      if (shootingStars.length < 5) {
+        shootingStars.push(new ShootingStar(forceGolden));
+      }
+    }
+
+    // Lập lịch sao băng xuất hiện ngẫu nhiên thỉnh thoảng vụt qua (mỗi 3 - 6 giây)
+    function scheduleShootingStar() {
+      const nextDelay = 2800 + Math.random() * 3200;
+      setTimeout(() => {
+        spawnShootingStar(Math.random() > 0.4);
+        // Thỉnh thoảng xuất hiện sao băng đôi
+        if (Math.random() > 0.75) {
+          setTimeout(() => spawnShootingStar(true), 250);
+        }
+        scheduleShootingStar();
+      }, nextDelay);
+    }
+    scheduleShootingStar();
+
+    // Vòng lặp animation mượt mà
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Vẽ hạt đom đóm / đèn hoa đăng
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      // Vẽ và cập nhật sao băng
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const star = shootingStars[i];
+        star.update();
+        star.draw();
+        if (!star.active) {
+          shootingStars.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+  </script>
+</body>
+</html>
